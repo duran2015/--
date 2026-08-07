@@ -29,6 +29,11 @@ npm run dev
 根目录的常规 `dev/build/start` 命令已经固定到正确的双端交付入口，
 不会再把咨询师 React 工程中遗留的旧 `/client` 页面当成用户端。
 
+仓库内嵌的 Flutter 用户端使用 `API_ENV=mock` 和
+`DEV_AUTO_LOGIN=1` 构建，因此 Release 演示页面也会自动进入用户端，
+并展示咨询师会话、普通消息、系统通知和各业务节点卡片。只有改用
+`API_ENV=live` 重新构建时才会连接真实接口并关闭这些 Mock 数据。
+
 ### 1. 咨询师端（4311）
 
 ```bash

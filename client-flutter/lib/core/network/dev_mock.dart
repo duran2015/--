@@ -43,8 +43,9 @@ Map<String, dynamic> devMockLoginData(String phone, {required bool dual}) => {
 
 /// DEV 接口 mock（契约 §1 #1-#8，登录/协议链路）。
 ///
-/// 生效条件：`kDebugMode` 且显式 `--dart-define=API_ENV=mock`
-///（默认 live，见 api_env.dart），由 main.dart 自动调用本方法
+/// 生效条件：显式 `--dart-define=API_ENV=mock`
+///（默认 live，见 api_env.dart），由 main.dart 自动调用本方法；
+/// Debug 与 Release 演示包使用相同的 Mock 数据
 ///（内部置 `ApiClient.useMock=true`）。单测可直接调用本方法。
 ///
 /// 特殊手机号：
