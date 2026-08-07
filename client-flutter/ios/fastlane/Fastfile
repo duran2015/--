@@ -1,0 +1,74 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+platform :ios do
+  lane :buildDebug do
+    #配置工程基本信息
+    update_app_identifier(
+      xcodeproj: "Runner.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
+      plist_path: "Runner/Info.plist", # Path to info plist file, relative to xcodeproj
+      app_identifier: "com.currantmind.kelu" # The App Identifier
+    )
+    #配置签名以及证书
+    automatic_code_signing(
+      path: "Runner.xcodeproj",
+      #启用自动签名
+      use_automatic_signing: false,
+      code_sign_identity: "iPhone Developer",
+      profile_name:"kelu Development Profile",
+      #根据证书拿到团队ID或者直接去苹果开发者官方查阅
+      team_id:"4U76WQUHY4",
+    )
+    #配置生成包的类型以及发布渠道
+    gym(scheme: "Runner",
+      workspace: "Runner.xcworkspace",
+      configuration: "Release",
+      clean: true,
+      output_name:"Runner.ipa",
+      #只打Arm64，缩小包体积
+      xcargs:"ARCHS='arm64'",
+      #IOS 9适配
+      export_xcargs:"-allowProvisioningUpdates",
+      export_method: "development"           # app-store, ad-hoc, package, enterprise, development, developer-id
+    )
+  end
+  lane :buildRelease do
+    update_app_identifier(
+      xcodeproj: "Runner.xcodeproj", # Optional path to xcodeproj, will use the first .xcodeproj if not set
+      plist_path: "Runner/Info.plist", # Path to info plist file, relative to xcodeproj
+      app_identifier: "com.currantmind.kelu" # The App Identifier
+    )
+    automatic_code_signing(
+      path: "Runner.xcodeproj",
+      use_automatic_signing: false,
+      code_sign_identity: "iPhone Distribution",
+      profile_name:"kelu_AppStore_Profile",
+      team_id:"4U76WQUHY4",
+    )
+    gym(scheme: "Runner",
+      workspace: "Runner.xcworkspace",
+      configuration: "Release",
+      clean: true,
+      output_name:"Runner.ipa",
+      #只打Arm64，缩小包体积
+      xcargs:"ARCHS='arm64'",
+      #IOS 9适配
+      export_xcargs:"-allowProvisioningUpdates",
+      export_method: "app-store"           # app-store, ad-hoc, package, enterprise, development, developer-id
+    )
+  end
+end

@@ -1,0 +1,6 @@
+{
+  "name": "心屿咨询 - 心理咨询师移动工作台",
+  "description": "温暖极简的心理咨询师移动端工作台 (H5/小程序版)，融合即时倾听沟通、下一个咨询待办提醒、订单与排班管理、结算统计及社交裂变增长工具。",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

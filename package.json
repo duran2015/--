@@ -1,0 +1,11 @@
+{
+  "name": "kelu-complete-prototype",
+  "private": true,
+  "scripts": {
+    "setup:counselor": "npm --prefix counselor-web install",
+    "dev:counselor": "npm --prefix counselor-web run dev",
+    "test:counselor": "npm --prefix counselor-web run lint && npm --prefix counselor-web run test && npm --prefix counselor-web run build",
+    "dev:client": "cd client-flutter && flutter run -d web-server --web-hostname 0.0.0.0 --web-port 4312 --dart-define=API_ENV=mock --dart-define=DEV_AUTO_LOGIN=1",
+    "test:client": "cd client-flutter && flutter analyze && flutter test"
+  }
+}

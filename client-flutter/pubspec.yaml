@@ -1,0 +1,91 @@
+name: xinyu_flutter
+description: 心愈/可鹿心理 Flutter 统一前端
+publish_to: "none"
+version: 1.0.1+2
+
+environment:
+  sdk: ^3.5.0
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_riverpod: 2.6.1
+  dio: 5.11.0
+  go_router: 14.8.1
+  web: 1.1.1
+  webview_flutter: 4.14.1
+  json_annotation: 4.9.0
+  freezed_annotation: 2.4.4
+  # 微信授权登录（分享/支付未接入，对齐 iOS WechatOpenSDK 的 SendAuthReq 链路）。
+  # 选 5.x 稳定线：6.0 刚发布（iOS scene_delegate/SPM 为破坏性变更），待验证后升级。
+  fluwx: 5.7.7
+  # 图片选择（阶段 5B 聊天页：相册/拍摄发图片消息。
+  # iOS 参照：XYChatInputBar presentPhotoLibrary/presentCamera）。
+  image_picker: 1.2.3
+  file_picker: 8.1.4
+  permission_handler: 12.0.3
+  audioplayers: 6.8.1
+  record: 6.2.1
+
+  # 本地存储
+  hive: 2.2.3
+  hive_flutter: 1.1.0
+  path_provider: 2.1.5
+
+  sign_in_with_apple: 7.0.1
+  gal: 2.3.3
+  # 支付宝 App 支付（阶段 9；Android/iOS 双端，唤起支付宝收银台）。
+  # 对齐 iOS AlipaySDK：服务端生成 orderInfo，客户端唤起并回传 resultStatus（9000=成功）。
+  tobias: 5.3.4
+
+  # 屏幕适配
+  flutter_screenutil: 5.9.3
+
+  # 图片缓存
+  cached_network_image: 3.4.1
+  flutter_image_compress: 2.4.0
+
+  # App信息
+  package_info_plus: 9.0.0
+  device_info_plus: 12.3.0
+
+  #Toast
+  fluttertoast: 9.0.0
+
+  #网易云信
+  nim_core_v2: 10.9.8+3
+  nertc_core: 5.9.30
+
+# 支付宝 App 支付 iOS 必需配置（tobias 5.3.4 的 podspec 校验缺失 url_scheme 会直接 abort pod install）：
+# 1. url_scheme：iOS 唤起支付宝收银台后跳回 App 的 URL Scheme，须与 Info.plist 中
+#    CFBundleURLSchemes（CFBundleURLName=alipay）保持一致，本项目为 xinyualipay。
+# 2. ios.universal_link：App 关联域名。tobias 的 pod 安装脚本会把它写入 entitlements 的
+#    associated-domains；若留空会写入无主机名的 "applinks:" 占位导致 Xcode 签名报错。
+#    此处配置真实域名 api.currantmind.cn（与 Runner.entitlements 注释中的 App 关联域名、
+#    微信 Universal Link、网关 CORS 白名单同源），避免注入 xinyu.example.com 这类无效占位。
+#    注意：当前 iOS 支付跳回明确只使用 URL Scheme（不依赖 Universal Link）；
+#    免费开发者账号不支持 Associated Domains 能力，真机调试期若 pod install 把该
+#    associated-domains 写入 entitlements 导致签名报错，参照 Runner.entitlements 注释
+#    临时移除；发布构建（付费账号）需先开通 App 关联域名并配置
+#    apple-app-site-association（AASA），再同步支付宝开放平台与 payment_view_model.dart。
+tobias:
+  url_scheme: xinyualipay
+  ios:
+    universal_link: https://api.currantmind.cn/
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: 5.0.0
+  build_runner: 2.5.4
+  freezed: 2.5.8
+  json_serializable: 6.9.5
+
+flutter:
+  uses-material-design: true
+  config:
+    # 部分网易云信/支付插件仍仅支持 CocoaPods；双依赖管理会重复链接 SDWebImage。
+    enable-swift-package-manager: false
+  assets:
+    # 2.0x/3.0x 变体由 Flutter 按目录约定自动解析，无需逐一声明
+    - assets/images/

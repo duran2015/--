@@ -1,0 +1,6 @@
+app_identifier("com.currantmind.kelu") # The bundle identifier of your app
+apple_id("Nanjing Xinyu Technology Co., Ltd") # Your Apple Developer Portal username
+
+
+# For more information about the Appfile, see:
+#     https://docs.fastlane.tools/advanced/#appfile

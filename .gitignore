@@ -1,0 +1,9 @@
+.DS_Store
+**/node_modules/
+**/dist/
+**/.dart_tool/
+**/build/
+**/ios/Pods/
+**/ios/.symlinks/
+**/.flutter-plugins-dependencies
+*.log

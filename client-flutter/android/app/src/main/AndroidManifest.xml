@@ -1,0 +1,110 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 音视频/网络权限：NERtc 咨询室 + IM 聊天（照 xinyuAndroid/app/src/main/AndroidManifest.xml） -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <!-- 聊天图片/文件读写存储权限 -->
+    <uses-permission
+        android:name="android.permission.READ_EXTERNAL_STORAGE"
+        android:maxSdkVersion="32" />
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="29" />
+    <!-- 网易云信 NIM 离线推送：Android 13+（API 33）显示通知横幅需声明并在运行期申请
+         （运行期申请见 im_session_controller，登录后 Permission.notification.request()） -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <application
+        android:label="可鹿心理"
+        android:name=".XinyuApp"
+        android:icon="@mipmap/ic_launcher"
+        android:usesCleartextTraffic="true">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:taskAffinity=""
+            android:theme="@style/LaunchTheme"
+            android:configChanges="orientation|keyboardHidden|keyboard|screenSize|smallestScreenSize|locale|layoutDirection|fontScale|screenLayout|density|uiMode"
+            android:hardwareAccelerated="true"
+            android:windowSoftInputMode="adjustResize">
+            <!-- Specifies an Android theme to apply to this Activity as soon as
+                 the Android process has started. This theme is visible to the user
+                 while the Flutter UI initializes. After that, this theme continues
+                 to determine the Window background behind the Flutter UI. -->
+            <meta-data
+              android:name="io.flutter.embedding.android.NormalTheme"
+              android:resource="@style/NormalTheme"
+              />
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
+        <!-- 微信 SDK 回调入口（1:1 对齐 xinyuAndroid AndroidManifest.xml）。
+             包名路径必须为 ${applicationId}.wxapi.WXEntryActivity，微信 SDK 按此路径唤起。
+             applicationId 已与微信开放平台登记一致（com.currantmind.kelu）。 -->
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:exported="true"
+            android:taskAffinity="${applicationId}"
+            android:launchMode="singleTask"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:scheme="wx75ec09d76033e394" />
+            </intent-filter>
+        </activity>
+        <!-- Don't delete the meta-data below.
+             This is used by the Flutter tool to generate GeneratedPluginRegistrant.java -->
+        <meta-data
+            android:name="flutterEmbedding"
+            android:value="2" />
+
+        <!-- ============================================================ -->
+        <!-- 网易云信 NIM 厂商混合推送 meta-data（按需开启，与控制台开通的厂商一致）-->
+        <!-- 仅在控制台开通了对应厂商、且 app/build.gradle.kts 加了该厂商 SDK 依赖后， -->
+        <!-- 才取消注释并填入对应 appId/appKey（值从各厂商开放平台获取）。            -->
+        <!-- 证书名(certName)在 Dart 侧 ImConfig 配置；此处只配厂商 SDK 自身所需。    -->
+        <!-- ============================================================ -->
+
+        <!-- 小米（值前需保留一个空格，小米推送 SDK 要求；MIPUSH_APPID 形如 "\ 2882303761517..."） -->
+        <!--
+        <meta-data android:name="MIPUSH_APPID" android:value="\ xiaomi_appid" />
+        <meta-data android:name="MIPUSH_APPKEY" android:value="\ xiaomi_appkey" />
+        -->
+
+        <!-- vivo（appId / api_key 从 vivo 开放平台获取） -->
+        <!--
+        <meta-data android:name="com.vivo.push.app_id" android:value="vivo_app_id" />
+        <meta-data android:name="com.vivo.push.api_key" android:value="vivo_api_key" />
+        -->
+
+        <!-- 魅族（appId / appKey 从魅族推送平台获取） -->
+        <!--
+        <meta-data android:name="MEIZUPUSH_APPID" android:value="mz_appid" />
+        <meta-data android:name="MEIZUPUSH_APPKEY" android:value="mz_appkey" />
+        -->
+
+        <!-- 华为：无需 manifest meta-data，改由 agconnect-services.json + HMS Push 插件处理
+             （在 app/build.gradle.kts 加 com.huawei.agconnect.agcp 插件与 push 依赖，
+              并把华为控制台下载的 agconnect-services.json 放到 app/ 目录）。 -->
+        <!-- OPPO：appId/appKey/appSecret 在 Dart 侧 ImConfig 配置，manifest 无需声明。 -->
+    </application>
+    <!-- Required to query activities that can process text, see:
+         https://developer.android.com/training/package-visibility and
+         https://developer.android.com/reference/android/content/Intent#ACTION_PROCESS_TEXT.
+
+         In particular, this is used by the Flutter engine in io.flutter.plugin.text.ProcessTextPlugin. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.PROCESS_TEXT"/>
+            <data android:mimeType="text/plain"/>
+        </intent>
+    </queries>
+</manifest>
