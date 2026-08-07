@@ -2,6 +2,10 @@
   "name": "kelu-complete-prototype",
   "private": true,
   "scripts": {
+    "postinstall": "npm --prefix counselor-web install",
+    "dev": "npm --prefix counselor-web run dev",
+    "build": "npm --prefix counselor-web run build",
+    "start": "npm --prefix counselor-web run start",
     "setup:counselor": "npm --prefix counselor-web install",
     "dev:counselor": "npm --prefix counselor-web run dev",
     "test:counselor": "npm --prefix counselor-web run lint && npm --prefix counselor-web run test && npm --prefix counselor-web run build",

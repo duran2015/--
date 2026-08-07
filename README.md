@@ -7,9 +7,27 @@
 | 咨询师端 | `counselor-web/` | React 19、Vite、Material 3 | `http://localhost:4311/counselor` |
 | 用户端 | `client-flutter/` | Flutter Web、Material 3 | `http://localhost:4312` |
 
+仓库的统一 Web 服务还会把同一份 Flutter 用户端发布到
+`http://localhost:4311/client/`。该路径不是旧 React 用户原型。
+
 两端当前通过统一的 Mock 业务字段、订单状态、工作流节点和 IM 卡片规则完成演示。真实数据库、支付、音视频、IM、转录及 AI 服务由 Builder 按本文末尾的边界接入。
 
 ## 拉取后运行
+
+### 最简单的一键启动（推荐给 Gemini、Trae 和 Builder）
+
+```bash
+npm install
+npm run dev
+```
+
+然后打开：
+
+- 咨询师端：`http://localhost:4311/counselor`
+- 用户端：`http://localhost:4311/client/`
+
+根目录的常规 `dev/build/start` 命令已经固定到正确的双端交付入口，
+不会再把咨询师 React 工程中遗留的旧 `/client` 页面当成用户端。
 
 ### 1. 咨询师端（4311）
 

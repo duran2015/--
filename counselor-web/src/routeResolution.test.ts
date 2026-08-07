@@ -1,25 +1,20 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { isKnownAppPath, resolveAppRoute } from "./routeResolution";
+import { isKnownAppPath } from "./routeResolution";
 
-test("client paths resolve to the client application", () => {
-  assert.equal(resolveAppRoute("/client"), "client");
-  assert.equal(resolveAppRoute("/client/profile"), "client");
-});
-
-test("counselor paths resolve to the counselor application", () => {
-  assert.equal(resolveAppRoute("/counselor"), "counselor");
-  assert.equal(resolveAppRoute("/counselor/orders"), "counselor");
+test("counselor paths stay in the counselor application", () => {
+  assert.equal(isKnownAppPath("/counselor"), true);
+  assert.equal(isKnownAppPath("/counselor/orders"), true);
 });
 
 test("unknown paths use the counselor application fallback", () => {
-  assert.equal(resolveAppRoute("/"), "counselor");
-  assert.equal(resolveAppRoute("/unknown"), "counselor");
+  assert.equal(isKnownAppPath("/"), false);
   assert.equal(isKnownAppPath("/unknown"), false);
 });
 
 test("lookalike prefixes are not treated as application paths", () => {
   assert.equal(isKnownAppPath("/clientele"), false);
+  assert.equal(isKnownAppPath("/client"), false);
   assert.equal(isKnownAppPath("/counselors"), false);
 });

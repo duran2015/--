@@ -180,6 +180,19 @@ app.post("/api/ai/generate-quote", async (req, res) => {
 
 // Vite middleware for development vs. production static build
 async function startServer() {
+  // The production deliverable contains the real Flutter client under /client/.
+  // Keep this route ahead of Vite's SPA fallback so /client never renders the
+  // retired React client prototype.
+  const flutterClientPath = path.join(
+    process.cwd(),
+    process.env.NODE_ENV === "production" ? "dist/client" : "public/client",
+  );
+  app.get(/^\/client$/, (_req, res) => res.redirect(302, "/client/"));
+  app.use("/client", express.static(flutterClientPath));
+  app.get("/client/*", (_req, res) => {
+    res.sendFile(path.join(flutterClientPath, "index.html"));
+  });
+
   if (process.env.NODE_ENV !== "production") {
     const vite = await createViteServer({
       server: {
