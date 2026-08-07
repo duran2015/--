@@ -67,6 +67,26 @@ flutter run -d web-server \
 
 用户端已经补齐标准 `web/` 平台目录，不需要模拟器，也不需要重新执行 `flutter create`。
 
+## 部署到 Vercel 给设计师查看
+
+推荐直接导入整个 GitHub 仓库，Vercel 项目设置如下：
+
+- Root Directory：留空（仓库根目录）。
+- Framework Preset：Other。
+- Install Command、Build Command、Output Directory：不要手填，使用仓库根目录 `vercel.json`。
+- 部署后如果修改过上述设置，先恢复默认，再执行一次 Redeploy，并取消使用旧 Build Cache。
+
+发布后的访问地址：
+
+- 咨询师端：`https://<你的域名>/counselor`
+- 用户端：`https://<你的域名>/client/`
+
+Vercel 不需要安装 Flutter SDK：仓库已包含经过浏览器验证的 Flutter Web
+演示产物，React/Vite 构建会把它原样复制到 `dist/client/`。根目录和
+`counselor-web/` 中都提供了对应的 Vercel SPA 路由配置，因此即使项目的
+Root Directory 曾被设成 `counselor-web`，两个入口也不会回退成 404 或旧
+React 用户页。
+
 ## 本次相对原 Flutter 双端版本的完整功能调整
 
 ### 一、统一账号和双身份
