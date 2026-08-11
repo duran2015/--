@@ -270,7 +270,7 @@ class AuthViewModel extends Notifier<AuthViewState> {
           data.copyWith(currentIdentity: RouteGuards.identityUser),
         );
       }
-      return RoutePaths.consultantOnboarding;
+      return RoutePaths.counselor;
     }
     if (data.currentIdentity != desired) {
       return selectIdentity(desired);
