@@ -23,7 +23,6 @@ class RouteGuards {
   /// 咨询师工作台同理仅咨询师可进）。
   static const Set<String> consultantOnlyPaths = <String>{
     RoutePaths.consultRecord,
-    RoutePaths.counselor,
     RoutePaths.counselorOrderDetail,
   };
 
