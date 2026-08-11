@@ -677,7 +677,7 @@ void registerDevMocks() {
         'consultantTitle': title,
         // 演示用占位头像（评价页 / 订单卡可展示）
         'consultantAvatar':
-            'https://i.pravatar.cc/150?u=consultant_$consultantId',
+            'https://api.dicebear.com/7.x/micah/png?seed=consultant_$consultantId',
         'consultantImUserId': 'xy_mock_counselor_$consultantId',
         'supportMode': supportMode,
         'supportModeDesc': supportModeDesc,

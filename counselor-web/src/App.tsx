@@ -112,7 +112,10 @@ export default function App() {
 
   const getUserAppUrl = (hash: 'home' | 'login') => {
     const host = window.location.hostname || 'localhost';
-    return `${window.location.protocol}//${host}:4312/splash#/${hash}`;
+    if (host === 'localhost' || host === '127.0.0.1') {
+      return `${window.location.protocol}//${host}:4312/#/${hash}`;
+    }
+    return `${window.location.protocol}//${host}/client/#/${hash}`;
   };
 
   const handleSwitchToUser = () => {

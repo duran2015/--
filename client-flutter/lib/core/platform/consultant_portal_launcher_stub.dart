@@ -1,4 +1,4 @@
-const String consultantPortalUrl = String.fromEnvironment(
+String get consultantPortalUrl => const String.fromEnvironment(
   'COUNSELOR_PORTAL_URL',
   defaultValue: 'http://localhost:4311/counselor',
 );
