@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { CheckCircle2, FileText, ShieldCheck, Camera, ArrowLeft, Building2, User, ChevronRight } from 'lucide-react';
+import { SignatureCapturePage } from './SignatureCapturePage';
 
 interface OnboardingFlowProps {
   onComplete: () => void;
@@ -9,6 +10,8 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
   const [step, setStep] = useState<0 | 1 | 2 | 3 | 4>(0);
   const [agreed, setAgreed] = useState(false);
   const [idVerified, setIdVerified] = useState(false);
+  const [signatureOpen, setSignatureOpen] = useState(false);
+  const [signatureImage, setSignatureImage] = useState<string | null>(null);
   
   const handleNext = () => setStep((s) => Math.min(s + 1, 4) as any);
   const handleBack = () => setStep((s) => Math.max(s - 1, 0) as any);
@@ -105,14 +108,20 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
             </span>
           </label>
 
+          {signatureImage && (
+            <div className="mb-4 flex items-center gap-2 rounded-[14px] bg-emerald-50 px-4 py-3 text-[12px] font-semibold text-emerald-800">
+              <CheckCircle2 className="h-4 w-4" />手写签名已采集
+            </div>
+          )}
+
           <button 
             disabled={!agreed}
-            onClick={handleNext}
+            onClick={() => setSignatureOpen(true)}
             className={`w-full h-14 rounded-full font-bold text-[16px] transition shadow-md active:scale-95 ${
               agreed ? 'bg-[#6750A4] text-white hover:bg-[#594294]' : 'bg-[#EAE5DB] text-[#7A756C] cursor-not-allowed shadow-none'
             }`}
           >
-            同意并继续
+            {signatureImage ? '重新签名并继续' : '签名并继续'}
           </button>
         </div>
       )}
@@ -219,6 +228,18 @@ export const OnboardingFlow: React.FC<OnboardingFlowProps> = ({ onComplete }) =>
             进入工作台 (模拟审核通过)
           </button>
         </div>
+      )}
+
+      {signatureOpen && (
+        <SignatureCapturePage
+          documentTitle="心理咨询师入驻协议"
+          onCancel={() => setSignatureOpen(false)}
+          onConfirm={(dataUrl) => {
+            setSignatureImage(dataUrl);
+            setSignatureOpen(false);
+            handleNext();
+          }}
+        />
       )}
     </div>
   );
