@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/auth/auth_controller.dart';
 import '../../core/network/api_response.dart';
+import '../../core/platform/consultant_portal_launcher.dart';
 import '../../core/router/route_paths.dart';
 import '../../core/theme/app_assets.dart';
 import '../../core/theme/app_colors.dart';
@@ -91,7 +92,7 @@ class AccountSecurityPage extends ConsumerWidget {
       final route = await ref
           .read(authViewModelProvider.notifier)
           .selectIdentity('consultant');
-      if (context.mounted) context.go(route);
+      if (context.mounted) navigateOrOpenPortal(context, route);
     } on ApiException catch (error) {
       if (context.mounted) AppToast.show(context, error.msg);
     }

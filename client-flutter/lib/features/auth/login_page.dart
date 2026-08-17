@@ -8,6 +8,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/network/api_response.dart';
+import '../../core/platform/consultant_portal_launcher.dart';
 import '../../core/router/route_paths.dart';
 import '../../core/storage/local_flags.dart';
 import '../../core/theme/app_assets.dart';
@@ -157,7 +158,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
           .read(authViewModelProvider.notifier)
           .resolveAfterExternalLogin(result.loginData!);
       if (!mounted) return;
-      context.go(route);
+      navigateOrOpenPortal(context, route);
     }
   }
 

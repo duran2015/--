@@ -7,6 +7,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/network/api_response.dart';
+import '../../core/platform/consultant_portal_launcher.dart';
 import '../../core/router/route_paths.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_dimens.dart';
@@ -112,7 +113,7 @@ class _VerifyCodePageState extends ConsumerState<VerifyCodePage> {
       if (route == RoutePaths.loginSelectIdentity) {
         context.push(route);
       } else {
-        context.go(route);
+        navigateOrOpenPortal(context, route);
       }
     } on ApiException catch (e) {
       if (!mounted) return;

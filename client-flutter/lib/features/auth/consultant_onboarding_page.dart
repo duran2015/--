@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/platform/consultant_portal_launcher.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/widgets/app_background.dart';
 import '../../core/widgets/app_loading_hud.dart';
@@ -46,7 +47,7 @@ class _ConsultantOnboardingPageState
           .selectIdentity('consultant');
       if (!mounted) return;
       AppToast.show(context, '演示审核已通过，欢迎进入咨询师工作台');
-      context.go(route);
+      navigateOrOpenPortal(context, route);
     } catch (_) {
       if (mounted) AppToast.show(context, '提交失败，请稍后重试');
     } finally {

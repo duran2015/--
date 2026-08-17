@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/auth/auth_controller.dart';
 import '../../core/network/api_response.dart';
+import '../../core/platform/consultant_portal_launcher.dart';
 import '../../core/router/route_paths.dart';
 import '../../core/theme/app_assets.dart';
 import '../../core/theme/app_colors.dart';
@@ -173,7 +174,7 @@ class _MinePageState extends ConsumerState<MinePage> {
           .read(authViewModelProvider.notifier)
           .selectIdentity('consultant');
       if (!mounted) return;
-      context.go(route);
+      navigateOrOpenPortal(context, route);
     } on ApiException catch (e) {
       if (!mounted) return;
       AppToast.show(context, e.msg);

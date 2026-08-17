@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/network/api_response.dart';
+import '../../core/platform/consultant_portal_launcher.dart';
 import '../../core/router/route_guards.dart';
 import '../../core/theme/app_assets.dart';
 import '../../core/theme/app_colors.dart';
@@ -37,7 +38,7 @@ class _SelectIdentityPageState extends ConsumerState<SelectIdentityPage> {
           .read(authViewModelProvider.notifier)
           .selectIdentity(identity);
       if (!mounted) return;
-      context.go(route);
+      navigateOrOpenPortal(context, route);
     } on ApiException catch (e) {
       if (!mounted) return;
       AppToast.show(context, e.msg);
