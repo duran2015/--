@@ -14,6 +14,7 @@ import { ConsultantProfile, ServiceProduct, SettlementRecord, Order, ConsultantB
 import { ScheduleSettingsView, MOCK_RULE } from './ScheduleSettingsView';
 import { HistoryOrdersView } from './HistoryOrdersView';
 import { CertificationsView } from './CertificationsView';
+import { SignatureCapturePage } from '../Onboarding/SignatureCapturePage';
 
 const MOCK_PLATFORM_RULES = [
   {
@@ -81,6 +82,7 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
   const [agreementStatus, setAgreementStatus] = useState<'pending' | 'signing' | 'signed'>('pending');
   const [agreementChecked, setAgreementChecked] = useState(false);
   const [signatureName, setSignatureName] = useState(consultant.name);
+  const [signatureImage, setSignatureImage] = useState<string | null>(null);
   const [signedAt, setSignedAt] = useState<string | null>(null);
   const [feedbackContent, setFeedbackContent] = useState('');
 
@@ -1624,45 +1626,6 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                     </div>
                   )}
 
-                  {agreementStatus === 'signing' && (
-                    <div className="rounded-[20px] border border-[#E6E0D6] bg-[#FAF8F5] p-5">
-                      <div className="mb-4 flex items-center gap-2">
-                        <Edit3 className="h-5 w-5 text-[#6750A4]" />
-                        <h3 className="font-bold text-[15px] text-[#1D1B16]">咨询师电子签名</h3>
-                      </div>
-                      <label className="block text-[12px] font-semibold text-[#625F58]">签署人姓名</label>
-                      <input
-                        value={signatureName}
-                        onChange={(event) => setSignatureName(event.target.value)}
-                        placeholder="请输入与实名认证一致的姓名"
-                        className="mt-2 h-12 w-full rounded-[14px] border border-[#C9C5BD] bg-white px-4 text-[15px] outline-none focus:border-[#6750A4] focus:ring-2 focus:ring-[#EADDFF]"
-                      />
-                      <label className="mt-4 flex cursor-pointer items-start gap-3 text-[12px] leading-5 text-[#625F58]">
-                        <input
-                          type="checkbox"
-                          checked={agreementChecked}
-                          onChange={(event) => setAgreementChecked(event.target.checked)}
-                          className="mt-1 h-4 w-4 accent-[#6750A4]"
-                        />
-                        <span>本人已完整阅读并同意《心理咨询师入驻协议》，确认使用上述姓名生成具有签约意愿的电子签名。</span>
-                      </label>
-                      <div className="mt-5 flex gap-3">
-                        <button
-                          onClick={() => setAgreementStatus('pending')}
-                          className="h-11 flex-1 rounded-full border border-[#C9C5BD] bg-white text-[14px] font-bold text-[#49463D]"
-                        >取消</button>
-                        <button
-                          disabled={!agreementChecked || !signatureName.trim()}
-                          onClick={() => {
-                            setSignedAt(new Date().toLocaleString('zh-CN', { hour12: false }));
-                            setAgreementStatus('signed');
-                          }}
-                          className="h-11 flex-[1.4] rounded-full bg-[#6750A4] text-[14px] font-bold text-white disabled:cursor-not-allowed disabled:bg-[#D0CBC2]"
-                        >确认签署</button>
-                      </div>
-                    </div>
-                  )}
-
                   {agreementStatus === 'signed' && (
                     <div className="rounded-[20px] border border-emerald-200 bg-emerald-50/60 p-5">
                       <div className="flex items-center gap-2 text-emerald-800">
@@ -1677,7 +1640,11 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
                       </div>
                       <div className="mt-5 rounded-[16px] border border-dashed border-emerald-300 bg-white/80 px-5 py-4 text-right">
                         <span className="block text-[11px] text-[#938F86]">咨询师电子签名</span>
-                        <span className="mt-2 block text-[27px] font-semibold italic tracking-[0.15em] text-[#243B35]" style={{ fontFamily: 'KaiTi, STKaiti, serif' }}>{signatureName}</span>
+                        {signatureImage ? (
+                          <img src={signatureImage} alt={`${signatureName}的电子签名`} className="ml-auto mt-2 h-16 max-w-[220px] object-contain object-right" />
+                        ) : (
+                          <span className="mt-2 block text-[27px] font-semibold italic tracking-[0.15em] text-[#243B35]" style={{ fontFamily: 'KaiTi, STKaiti, serif' }}>{signatureName}</span>
+                        )}
                       </div>
                     </div>
                   )}
@@ -1686,6 +1653,20 @@ export const ProfileTab: React.FC<ProfileTabProps> = ({
             </div>
           )}
         </div>
+      )}
+
+      {agreementStatus === 'signing' && selectedRule?.isAgreement && (
+        <SignatureCapturePage
+          documentTitle={`${selectedRule.title} · ${selectedRule.version}`}
+          signerName={signatureName}
+          onCancel={() => setAgreementStatus('pending')}
+          onConfirm={(dataUrl) => {
+            setSignatureImage(dataUrl);
+            setAgreementChecked(true);
+            setSignedAt(new Date().toLocaleString('zh-CN', { hour12: false }));
+            setAgreementStatus('signed');
+          }}
+        />
       )}
 
       {/* HISTORY ORDERS VIEW */}
