@@ -424,10 +424,10 @@ export const INITIAL_ORDERS: Order[] = [
     bookingDate: '2026-08-03',
     bookingTimeSlot: '14:00 - 14:15',
     price: 39,
-    status: 'pending_confirm',
+    status: 'scheduled',
     preMoodScore: 9,
     complaintTopic: '刚刚在团队会议后感到极度沮丧与愤怒，希望能快速情绪排毒',
-    note: '新来访者，通过【朋友圈暖心体验券】预约接单。',
+    note: '新来访者，通过【朋友圈暖心体验券】完成预约。',
     hasSummary: false,
     createdAt: '2026-08-03 09:10'
   },

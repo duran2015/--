@@ -70,7 +70,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
   }, [viewMode, onSubPageChange]);
 
   const isPendingStatus = (status: OrderStatus) => 
-    status === 'pending_confirm' || status === 'pending_reschedule_confirm' || status === 'pending_cancel_confirm';
+    status === 'pending_reschedule_confirm' || status === 'pending_cancel_confirm';
 
   const statusTabs = [
     { key: 'all', label: '全部订单', count: orders.length },
@@ -89,7 +89,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'pending_confirm':
-        return <span className="bg-amber-100 text-amber-900 text-[11px] px-2.5 py-0.5 rounded-full font-semibold border border-amber-300">待接单</span>;
+        return <span className="bg-[#EADDFF] text-[#21005D] text-[11px] px-2.5 py-0.5 rounded-full font-semibold border border-[#D0BCFF]">待咨询</span>;
       case 'pending_reschedule_confirm':
         return <span className="bg-amber-100 text-amber-900 text-[11px] px-2.5 py-0.5 rounded-full font-semibold border border-amber-300">待改期</span>;
       case 'pending_cancel_confirm':
@@ -258,7 +258,7 @@ export const OrdersTab: React.FC<OrdersTabProps> = ({
                 </div>
                 
                 <p className="text-[13px] text-[#7A756C] truncate pr-4 font-medium">
-                  {order.status === 'pending_confirm' ? '[系统] 待确认接单，请及时处理' : 
+                  {order.status === 'pending_confirm' ? '[系统] 预约已生效，请按时提供服务' :
                    order.status === 'scheduled' ? '[系统] 咨询室即将开启，请准备入室' : 
                    order.status === 'completed' && !order.hasSummary ? '[系统] 咨询已结束，AI 结案小结待确认' :
                    order.status === 'completed' && order.hasSummary ? '好的，谢谢老师。' :

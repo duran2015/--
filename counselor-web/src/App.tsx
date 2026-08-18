@@ -11,6 +11,7 @@ import { ProfileTab } from './components/Profile/ProfileTab';
 import { VoiceCall } from './client-app/pages/Counseling/VoiceCall';
 import { SessionReviewWorkspace } from './components/SessionReview/SessionReviewWorkspace';
 import { OnboardingFlow } from './components/Onboarding/OnboardingFlow';
+import { applyOnboardingSeed } from './counselorProfileModel';
 
 import { ChatDrawer } from './components/IM/ChatDrawer';
 
@@ -100,7 +101,7 @@ export default function App() {
 
   // Helper counts
   const pendingSummaryCount = displayedOrders.filter((o) => o.status === 'completed' && !o.hasSummary).length;
-  const pendingOrderCount = displayedOrders.filter((o) => o.status === 'pending_confirm' || o.status === 'pending_reschedule_confirm' || o.status === 'pending_cancel_confirm').length;
+  const pendingOrderCount = displayedOrders.filter((o) => o.status === 'pending_reschedule_confirm' || o.status === 'pending_cancel_confirm').length;
 
   // Next upcoming session
   const nextScheduledOrder = displayedOrders.find((o) => o.status === 'scheduled');
@@ -127,7 +128,7 @@ export default function App() {
 
   const handleConfirmOrder = (orderId: string) => {
     confirmConsultationBooking(orderId);
-    alert('已成功确认接单，已为您安排入班提醒！');
+    alert('预约已生效，已同步至时间安排。');
   };
 
   const handleWriteSummary = (order: Order) => {
@@ -178,7 +179,7 @@ export default function App() {
   if (!isOnboarded) {
     return (
       <div className="relative mx-auto h-[100dvh] w-full max-w-md overflow-hidden bg-[#FAF8F5]">
-        <OnboardingFlow onComplete={() => setMockState('empty')} />
+        <OnboardingFlow onComplete={(seed) => { setConsultant((current) => applyOnboardingSeed(current, seed)); setMockState('empty'); }} />
       </div>
     );
   }

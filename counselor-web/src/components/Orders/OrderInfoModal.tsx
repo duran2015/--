@@ -11,7 +11,7 @@ interface OrderInfoModalProps {
 const getStatusBadge = (status: OrderStatus) => {
   switch (status) {
     case 'pending_confirm':
-      return <span className="bg-amber-100 text-amber-900 text-xs px-2.5 py-1 rounded-full font-semibold border border-amber-300">待接单</span>;
+      return <span className="bg-[#EADDFF] text-[#21005D] text-xs px-2.5 py-1 rounded-full font-semibold border border-[#D0BCFF]">待咨询</span>;
     case 'pending_reschedule_confirm':
       return <span className="bg-amber-100 text-amber-900 text-xs px-2.5 py-1 rounded-full font-semibold border border-amber-300">待改期</span>;
     case 'pending_cancel_confirm':
@@ -121,7 +121,7 @@ export const OrderInfoModal: React.FC<OrderInfoModalProps> = ({ order, onClose, 
       </div>
 
       {/* Fixed Bottom Action Bar */}
-      {(order.status === 'pending_confirm' || order.status === 'pending_reschedule_confirm' || order.status === 'pending_cancel_confirm') && (
+      {(order.status === 'pending_reschedule_confirm' || order.status === 'pending_cancel_confirm') && (
         <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-[#ECE6DC] p-4 pb-safe z-20 shadow-[0_-4px_20px_rgba(0,0,0,0.05)]">
           <div className="max-w-lg mx-auto flex gap-3">
             <button 
@@ -132,18 +132,12 @@ export const OrderInfoModal: React.FC<OrderInfoModalProps> = ({ order, onClose, 
             </button>
             <button 
               onClick={() => {
-                if (order.status === 'pending_confirm' && onConfirmOrder) {
-                  onConfirmOrder(order.id);
-                  onClose();
-                } else {
-                  alert('已接受');
-                  onClose();
-                }
+                alert('已接受');
+                onClose();
               }}
               className="flex-1 py-3.5 rounded-full bg-[#6750A4] text-white text-[15px] font-bold hover:bg-[#594294] transition shadow-md active:scale-95"
             >
-              {order.status === 'pending_confirm' ? '确认接单' : 
-               order.status === 'pending_cancel_confirm' ? '同意取消' : '同意修改'}
+              {order.status === 'pending_cancel_confirm' ? '同意取消' : '同意修改'}
             </button>
           </div>
         </div>

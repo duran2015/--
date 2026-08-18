@@ -72,7 +72,7 @@ export const OrderDetailView: React.FC<OrderDetailViewProps> = ({
         id: 'evt_1',
         type: 'interactive_card_client',
         cardType: 'new_booking',
-        cardState: order.status === 'pending_confirm' ? 'pending' : 'resolved',
+        cardState: 'resolved',
         cardData: { 
           serviceType: order.serviceTypeName,
           bookingTime: `${order.bookingDate} ${order.bookingTimeSlot}`,
@@ -81,16 +81,11 @@ export const OrderDetailView: React.FC<OrderDetailViewProps> = ({
         timestamp: order.createdAt
       });
 
-      // 2. Pending Confirm State (SOP Card removed as it's merged into the interactive card)
-      if (order.status === 'pending_confirm') {
-        return newItems;
-      }
-
-      // 3. Accepted State
+      // 2. 支付成功即确认，不再插入接单卡片或确认通知。
       newItems.push({
         id: 'evt_2',
         type: 'system_event',
-        content: '您已确认接单，系统已向来访者发送前置评估问卷',
+        content: '预约已生效，咨询前资料已向来访者开放',
         timestamp: addTime(5)
       });
 
@@ -207,7 +202,7 @@ export const OrderDetailView: React.FC<OrderDetailViewProps> = ({
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
       case 'pending_confirm':
-        return <span className="bg-amber-100 text-amber-900 text-[10px] px-2 py-0.5 rounded-full font-semibold border border-amber-300">待接单</span>;
+        return <span className="bg-[#EADDFF] text-[#21005D] text-[10px] px-2 py-0.5 rounded-full font-semibold border border-[#D0BCFF]">待咨询</span>;
       case 'scheduled':
         return <span className="bg-[#EADDFF] text-[#21005D] text-[10px] px-2 py-0.5 rounded-full font-semibold border border-[#D0BCFF]">待咨询</span>;
       case 'completed':
@@ -226,18 +221,13 @@ export const OrderDetailView: React.FC<OrderDetailViewProps> = ({
               <div className="w-6 h-6 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
                 <CheckCircle2 className="w-3.5 h-3.5 text-amber-600" />
               </div>
-              业务流：等待接单
+              预约已确认
             </h4>
             <div className="text-xs text-[#49463D] mb-4 space-y-1.5 mt-3">
               <p>来访者：<span className="font-medium text-[#1D1B16]">{order.clientName}</span></p>
               <p>预约时间：<span className="font-medium text-[#1D1B16]">{order.bookingDate} {order.bookingTimeSlot}</span></p>
             </div>
-            <button
-              onClick={() => onConfirmOrder(order.id)}
-              className="w-full py-2.5 rounded-[12px] bg-[#6750A4] text-white text-xs font-bold hover:bg-[#594294] shadow-xs transition active:scale-[0.98]"
-            >
-              立即确认接单
-            </button>
+            <p className="text-xs text-[#7A756C]">支付成功后已自动生效，无需接单。</p>
           </div>
         );
       case 'intake_form':

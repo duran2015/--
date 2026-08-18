@@ -21,7 +21,7 @@ interface ScheduleTabProps {
     onNavigateToGrowth?: () => void;
   }
 
-type SubTab = 'calendar' | 'pending' | 'confirmed';
+type SubTab = 'calendar' | 'confirmed';
 type BookedSubTab = 'all' | 'today' | 'future' | 'completed' | 'cancelled';
 
 export const ScheduleTab: React.FC<ScheduleTabProps> = ({
@@ -30,7 +30,6 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
   products,
   isMockEmpty,
   hasConfiguredSchedule,
-  onConfirmOrder,
   onEnterRoom,
   onSubPageChange,
   onOpenOrderInfo,
@@ -48,15 +47,13 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
   const [isMonthView, setIsMonthView] = useState(false);
   
   // Modal States
-  const [showConfirmModal, setShowConfirmModal] = useState<Order | null>(null);
   const [showResourceModal, setShowResourceModal] = useState(false);
   const [showUnavailableModal, setShowUnavailableModal] = useState(false);
   const [showAddUnavailableModal, setShowAddUnavailableModal] = useState(false);
 
   const safeOrders = orders || [];
-  const pendingOrders = safeOrders.filter(o => o.status === 'pending_confirm');
-  // For MVP, just show all non-pending as booked/history based on tab
-  const confirmedOrders = safeOrders.filter(o => o.status === 'scheduled');
+  // 模式一中支付成功即确认；pending_confirm 只作为旧数据兼容展示为已预约。
+  const confirmedOrders = safeOrders.filter(o => o.status === 'scheduled' || o.status === 'pending_confirm');
   const completedOrders = safeOrders.filter(o => o.status === 'completed');
 
   useEffect(() => {
@@ -112,7 +109,6 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
       <div className="flex gap-2 overflow-x-auto scrollbar-none pb-1">
         {[
           { id: 'calendar', label: '日历' },
-          { id: 'pending', label: `待确认 (${pendingOrders.length})` },
           { id: 'confirmed', label: '已预约' },
         ].map(tab => (
           <button
@@ -180,9 +176,9 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
             <div className="grid grid-cols-7 gap-y-2 gap-x-1">
               {monthDays.map((date, i) => {
                 const isSelected = date === selectedDate;
-                // Mock dots
-                const hasConfirmed = !isMockEmpty && (date === 5 || date === 12 || date === 18);
-                const hasPending = !isMockEmpty && (date === 5 || date === 8 || date === 22);
+                // Mock 日历摘要：绿点=有有效咨询安排；橙点=有排班相关待处理变更。
+                const hasAppointment = !isMockEmpty && (date === 5 || date === 12 || date === 18);
+                const hasScheduleAction = !isMockEmpty && (date === 5 || date === 8 || date === 22);
 
                 return (
                   <div 
@@ -207,8 +203,8 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                           {date}
                         </div>
                         <div className="flex gap-1 mt-1 h-1.5">
-                          {hasConfirmed && <div className="w-1.5 h-1.5 rounded-full bg-[#388E3C]"></div>}
-                          {hasPending && <div className="w-1.5 h-1.5 rounded-full bg-[#F29900]"></div>}
+                          {hasAppointment && <div className="w-1.5 h-1.5 rounded-full bg-[#388E3C]"></div>}
+                          {hasScheduleAction && <div className="w-1.5 h-1.5 rounded-full bg-[#F29900]"></div>}
                         </div>
                       </>
                     )}
@@ -225,9 +221,9 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
               const weekDayIndex = displayDateObj.getDay();
               const isSelected = offset === 0;
               
-              // Mock dots
-              const hasConfirmed = !isMockEmpty && (displayDate === 5 || displayDate === 12 || displayDate === 18);
-              const hasPending = !isMockEmpty && (displayDate === 5 || displayDate === 8 || displayDate === 22);
+              // Mock 日历摘要：绿点=有有效咨询安排；橙点=有排班相关待处理变更。
+              const hasAppointment = !isMockEmpty && (displayDate === 5 || displayDate === 12 || displayDate === 18);
+              const hasScheduleAction = !isMockEmpty && (displayDate === 5 || displayDate === 8 || displayDate === 22);
 
               return (
                 <div 
@@ -246,8 +242,8 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                     {displayDate}
                   </div>
                   <div className="flex gap-1 h-1.5">
-                    {hasConfirmed && <div className="w-1.5 h-1.5 rounded-full bg-[#388E3C]"></div>}
-                    {hasPending && <div className="w-1.5 h-1.5 rounded-full bg-[#F29900]"></div>}
+                    {hasAppointment && <div className="w-1.5 h-1.5 rounded-full bg-[#388E3C]"></div>}
+                    {hasScheduleAction && <div className="w-1.5 h-1.5 rounded-full bg-[#F29900]"></div>}
                   </div>
                 </div>
               );
@@ -312,14 +308,14 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
               </>
             ) : (
               <>
-                {/* 1. 已确认 - Green */}
+                {/* 1. 已预约、待履约 - Green */}
                 <div className="flex gap-4 relative z-10">
                   <div className="w-12 text-right text-[14px] font-bold text-[#1D1B16] pt-3 shrink-0 font-mono">14:00</div>
                   <div className="flex-1 bg-[#C4EED0] rounded-[24px] p-4 shadow-sm border border-[#A1DEB3] cursor-pointer hover:shadow-md active:scale-[0.98] transition-all relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-16 h-16 bg-white/20 rounded-full blur-xl -mr-8 -mt-8" />
                     <div className="flex justify-between items-start mb-2 relative z-10">
                       <span className="text-[11px] bg-[#003912] text-white px-2 py-0.5 rounded-md font-bold shadow-xs flex items-center gap-1">
-                        <CheckCircle2 className="w-3 h-3" /> 已确认
+                        <Clock className="w-3 h-3" /> 即将开始
                       </span>
                       <span className="text-[12px] text-[#003912] font-mono font-bold">14:00-14:45</span>
                     </div>
@@ -334,22 +330,22 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
                   </div>
                 </div>
 
-                {/* 2. 待确认 - Yellow */}
+                {/* 2. 已预约、待履约 - Green */}
                 <div className="flex gap-4 relative z-10">
                   <div className="w-12 text-right text-[14px] font-bold text-[#1D1B16] pt-3 shrink-0 font-mono">15:00</div>
-                  <div className="flex-1 bg-[#FFDF99] rounded-[24px] p-4 shadow-sm border border-[#F2C97D] cursor-pointer hover:shadow-md active:scale-[0.98] transition-all">
+                  <div className="flex-1 bg-[#C4EED0] rounded-[24px] p-4 shadow-sm border border-[#A1DEB3] cursor-pointer hover:shadow-md active:scale-[0.98] transition-all">
                     <div className="flex justify-between items-start mb-2">
-                      <span className="text-[11px] bg-[#7A2E0E] text-white px-2 py-0.5 rounded-md font-bold shadow-xs flex items-center gap-1">
-                        <AlertCircle className="w-3 h-3" /> 待确认
+                      <span className="text-[11px] bg-[#003912] text-white px-2 py-0.5 rounded-md font-bold shadow-xs flex items-center gap-1">
+                        <CalendarIcon className="w-3 h-3" /> 待咨询
                       </span>
-                      <span className="text-[12px] text-[#7A2E0E] font-mono font-bold">15:00-15:30</span>
+                      <span className="text-[12px] text-[#003912] font-mono font-bold">15:00-15:30</span>
                     </div>
-                    <div className="font-bold text-[#491C08] text-[16px] tracking-tight flex items-center gap-2">
-                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Luna" alt="avatar" className="w-6 h-6 rounded-full bg-white/50 border border-[#7A2E0E]/20" />
+                    <div className="font-bold text-[#001C3B] text-[16px] tracking-tight flex items-center gap-2">
+                      <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=Luna" alt="avatar" className="w-6 h-6 rounded-full bg-white/50 border border-[#003912]/20" />
                       李女士 (30分钟)
                     </div>
-                    <div className="text-[12px] text-[#7A2E0E] mt-1.5 opacity-80 font-medium">
-                      待确认接单，超时将自动取消
+                    <div className="text-[12px] text-[#003912] mt-1.5 opacity-80 font-medium">
+                      已进入时间安排，请按时提供服务
                     </div>
                   </div>
                 </div>
@@ -399,64 +395,6 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
           </div>
         )}
       </div>
-    </div>
-  );
-
-  const renderPending = () => (
-    <div className="animate-in fade-in duration-200 bg-[#FAF8F5] min-h-full pb-24 p-4 space-y-4">
-      <div className="bg-[#EADDFF]/40 border border-[#D0BCFF] rounded-[24px] p-4 shadow-sm">
-        <h3 className="font-bold text-[14px] text-[#1D1B16] flex items-center gap-2">
-          <AlertCircle className="w-4 h-4 text-[#6750A4]" /> 待处理预约申请
-        </h3>
-        <p className="text-[12px] text-[#49463D] mt-1">确认后将自动占用对应的时间资源，并同步至日历。</p>
-      </div>
-
-      {pendingOrders.map(order => (
-        <div key={order.id} className="bg-white border border-[#ECE6DC] rounded-[28px] p-5 shadow-sm">
-          <div className="flex gap-3 mb-4">
-            <img src={order.clientAvatar} alt="" className="w-12 h-12 rounded-full object-cover border border-[#ECE6DC]" />
-            <div className="flex-1">
-              <div className="flex justify-between items-start">
-                <div className="font-bold text-[16px] text-[#1D1B16]">{order.clientName}</div>
-                <div className="text-[#B3261E] font-bold font-mono text-[16px]">¥{order.price}</div>
-              </div>
-              <div className="text-[13px] text-[#7A756C] mt-0.5 font-medium">
-                {order.serviceTypeName}
-              </div>
-            </div>
-          </div>
-          
-          <div className="bg-[#FAF8F5] rounded-[16px] p-3 space-y-2 mb-4 border border-[#ECE6DC]">
-            <div className="flex items-center text-[13px]">
-              <span className="text-[#7A756C] w-16">预约时间</span>
-              <span className="font-bold text-[#21005D] bg-[#EADDFF] px-2 py-0.5 rounded-md">
-                {order.bookingDate} {order.bookingTimeSlot}
-              </span>
-            </div>
-            <div className="flex items-start text-[13px]">
-              <span className="text-[#7A756C] w-16 shrink-0 mt-0.5">用户留言</span>
-              <span className="text-[#49463D] font-medium leading-relaxed">
-                {order.complaintTopic || '无留言'}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex gap-3 pt-2">
-            <button className="flex-1 py-3 rounded-full bg-white border border-[#E6E0D6] text-[#49463D] text-[14px] font-bold active:scale-95 transition hover:bg-[#FAF8F5]">
-              拒绝
-            </button>
-            <button 
-              onClick={() => onConfirmOrder(order.id)}
-              className="flex-1 py-3 rounded-full bg-[#6750A4] text-white text-[14px] font-bold active:scale-95 transition shadow-sm hover:bg-[#594294]"
-            >
-              确认接单
-            </button>
-          </div>
-        </div>
-      ))}
-      {pendingOrders.length === 0 && (
-        <div className="text-center text-[#7A756C] py-10 text-sm font-medium">暂无待确认的预约</div>
-      )}
     </div>
   );
 
@@ -554,7 +492,6 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
       {renderTopNav()}
 
       {activeTab === 'calendar' && renderCalendar()}
-      {activeTab === 'pending' && renderPending()}
       {activeTab === 'confirmed' && renderConfirmed()}
       {/* Bottom FAB */}
       <button 
@@ -563,50 +500,6 @@ export const ScheduleTab: React.FC<ScheduleTabProps> = ({
       >
         <Plus className="w-6 h-6" />
       </button>
-
-      {/* Modals go here */}
-      {showConfirmModal && (
-        <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center animate-in fade-in">
-          <div className="bg-white w-full sm:w-[400px] rounded-t-[28px] sm:rounded-[28px] p-6 animate-in slide-in-from-bottom-10 sm:slide-in-from-bottom-0">
-            <div className="flex justify-between items-center mb-6">
-              <h3 className="font-bold text-[18px] text-[#1D1B16]">预约确认</h3>
-              <button onClick={() => setShowConfirmModal(null)} className="p-2"><X className="w-5 h-5 text-[#49463D]"/></button>
-            </div>
-            <div className="flex gap-4 items-center mb-6">
-              <img src={showConfirmModal.clientAvatar} alt="" className="w-14 h-14 rounded-full" />
-              <div>
-                <div className="font-bold text-[16px]">{showConfirmModal.clientName}</div>
-                <div className="text-[13px] text-[#7A756C] mt-1">{showConfirmModal.serviceTypeName}</div>
-              </div>
-            </div>
-            <div className="bg-[#FAF8F5] p-4 rounded-[16px] mb-6 space-y-3">
-              <div className="flex justify-between text-[14px]">
-                <span className="text-[#7A756C]">预约时间</span>
-                <span className="font-bold text-[#21005D]">10:00-10:30</span>
-              </div>
-              <div className="flex justify-between text-[14px]">
-                <span className="text-[#7A756C]">订单金额</span>
-                <span className="font-bold text-[#B3261E]">¥{showConfirmModal.price}</span>
-              </div>
-              <div className="pt-2 border-t border-[#ECE6DC]">
-                <span className="text-[#7A756C] text-[13px] block mb-1">用户留言</span>
-                <span className="text-[#1D1B16] text-[14px] leading-relaxed">{showConfirmModal.complaintTopic || '无留言'}</span>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <button onClick={() => setShowConfirmModal(null)} className="flex-1 py-3 rounded-full bg-white border border-[#E6E0D6] text-[#49463D] text-[15px] font-bold active:scale-95 transition">
-                拒绝预约
-              </button>
-              <button 
-                onClick={() => { onConfirmOrder(showConfirmModal.id); setShowConfirmModal(null); }}
-                className="flex-1 py-3 rounded-full bg-[#6750A4] text-white text-[15px] font-bold active:scale-95 transition shadow-sm"
-              >
-                确认预约
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
 
       {showResourceModal && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-end sm:items-center justify-center animate-in fade-in">

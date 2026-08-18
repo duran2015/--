@@ -36,19 +36,11 @@ const COUNSELOR_NOTIFICATION_CHANNELS: NotificationChannel[] = [
   {
     id: "workflow",
     name: "业务待办",
-    description: "预约确认、资料查阅、咨询与总结节点",
+    description: "资料查阅、咨询与总结节点",
     icon: CalendarCheck,
     tone: "bg-emerald-100 text-emerald-700",
-    unread: 3,
+    unread: 2,
     messages: [
-      {
-        id: "wf-1",
-        title: "新的预约待确认",
-        body: "周明宇预约了明天 19:00 的语音咨询，请在 2 小时内处理。",
-        time: "今天 14:26",
-        actionLabel: "处理预约",
-        actionTarget: "order:KL-000107",
-      },
       {
         id: "wf-2",
         title: "咨询总结待确认",

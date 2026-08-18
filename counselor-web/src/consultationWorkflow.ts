@@ -403,25 +403,9 @@ export function seedWorkflowFromOrders(
 ): ConsultationWorkflowState {
   return orders.reduce((state, order) => {
     const { counselorId } = actorIds(order);
-    if (order.status === "pending_confirm") {
-      return {
-        ...state,
-        tasks: [
-          ...state.tasks,
-          {
-            id: `task-confirm-${order.id}`,
-            actorRole: "counselor",
-            actorId: counselorId,
-            taskType: "confirm_booking",
-            status: "pending",
-            blockingSettlement: false,
-            orderId: order.id,
-            createdAt: timestamp,
-          },
-        ],
-      };
-    }
-    if (order.status === "scheduled") {
+    // 模式一：支付成功即确认，不创建“咨询师接单”待办。
+    // pending_confirm 仅作为旧数据兼容，按已确认预约生成后续履约任务。
+    if (order.status === "scheduled" || order.status === "pending_confirm") {
       return {
         ...state,
         tasks: [...state.tasks, ...buildScheduledTasks(order, timestamp)],

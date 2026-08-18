@@ -2,7 +2,6 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  confirmBookingWorkflow,
   emptyWorkflowState,
   endSessionWorkflow,
   normalizeConsultationWorkflow,
@@ -210,7 +209,7 @@ test("order states seed the matching actor tasks", () => {
   const state = seedWorkflowFromOrders([pending, scheduled, fixtureOrder], now);
   const types = state.tasks.map((task) => task.taskType);
 
-  assert.equal(types.includes("confirm_booking"), true);
+  assert.equal(types.includes("confirm_booking"), false);
   assert.equal(types.includes("complete_intake"), true);
   assert.equal(types.includes("review_intake"), true);
   assert.equal(types.includes("enter_session"), true);
@@ -271,14 +270,13 @@ test("ending a scheduled session completes the room-entry task", () => {
   );
 });
 
-test("confirming a booking completes confirmation and creates intake and room tasks", () => {
+test("mode one treats a paid legacy pending booking as confirmed without counselor action", () => {
   const pending = { ...fixtureOrder, status: "pending_confirm" as const, intakeForm: undefined };
   const seeded = seedWorkflowFromOrders([pending], now);
-  const confirmed = confirmBookingWorkflow(seeded, pending, now);
 
-  assert.equal(confirmed.tasks.find((task) => task.taskType === "confirm_booking")?.status, "completed");
-  assert.equal(confirmed.tasks.some((task) => task.taskType === "complete_intake"), true);
-  assert.equal(confirmed.tasks.some((task) => task.taskType === "enter_session"), true);
+  assert.equal(seeded.tasks.some((task) => task.taskType === "confirm_booking"), false);
+  assert.equal(seeded.tasks.some((task) => task.taskType === "complete_intake"), true);
+  assert.equal(seeded.tasks.some((task) => task.taskType === "enter_session"), true);
 });
 
 test("mock session evidence is traceable and ready for a review draft", () => {

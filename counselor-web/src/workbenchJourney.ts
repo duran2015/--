@@ -2,7 +2,6 @@ import type { Order, WorkflowTask } from "./types";
 import { hasIntakeData } from "./intakeData";
 
 const phases = [
-  { taskType: "confirm_booking", label: "确认预约" },
   { taskType: "review_intake", label: "查阅资料" },
   { taskType: "enter_session", label: "开始咨询" },
   { taskType: "complete_session_review", label: "确认总结" },

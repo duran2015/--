@@ -53,7 +53,7 @@ test("projects the intake review before a later room task regardless of task ord
 
   assert.deepEqual(
     buildCounselorJourneys([scheduledWithIntake], scheduledTasks)[0].steps.map((step) => step.status),
-    ["completed", "current", "locked", "locked"],
+    ["current", "locked", "locked"],
   );
 });
 
@@ -78,7 +78,7 @@ test("treats the submitted pre-questionnaire as intake data", () => {
   assert.equal(journey.currentTask.taskType, "review_intake");
   assert.deepEqual(
     journey.steps.map((step) => step.status),
-    ["completed", "current", "locked", "locked"],
+    ["current", "locked", "locked"],
   );
 });
 
@@ -98,7 +98,7 @@ test("skips intake review when the client did not submit an intake form", () => 
 
   assert.deepEqual(
     buildCounselorJourneys([scheduledWithoutIntake], roomTask)[0].steps.map((step) => step.status),
-    ["completed", "skipped", "current", "locked"],
+    ["skipped", "current", "locked"],
   );
 });
 
@@ -113,14 +113,11 @@ test("keeps separate journeys for separate orders belonging to the same client",
   assert.equal(buildCounselorJourneys([firstOrder, secondOrder], tasksForBoth).length, 2);
 });
 
-test("makes booking confirmation the current step for a pending confirmation", () => {
+test("does not expose a booking-confirmation task in mode one", () => {
   const pendingConfirmation = makeOrder({ status: "pending_confirm" });
   const confirmationTask = [makeCounselorTask("confirm_booking", pendingConfirmation.id)];
 
-  assert.deepEqual(
-    buildCounselorJourneys([pendingConfirmation], confirmationTask)[0].steps.map((step) => step.status),
-    ["current", "locked", "locked", "locked"],
-  );
+  assert.equal(buildCounselorJourneys([pendingConfirmation], confirmationTask).length, 0);
 });
 
 test("makes summary confirmation current after a completed session", () => {
@@ -137,6 +134,6 @@ test("makes summary confirmation current after a completed session", () => {
 
   assert.deepEqual(
     buildCounselorJourneys([completedSession], summaryTask)[0].steps.map((step) => step.status),
-    ["completed", "completed", "completed", "current"],
+    ["completed", "completed", "current"],
   );
 });
